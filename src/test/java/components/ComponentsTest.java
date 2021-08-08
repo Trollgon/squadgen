@@ -7,6 +7,7 @@ import com.crossroadsinn.components.roles.BoonCoverage;
 import com.crossroadsinn.components.roles.Responsibility;
 import com.crossroadsinn.components.roles.Role;
 import com.crossroadsinn.components.squads.BoonRequirement;
+import com.crossroadsinn.components.squads.RoleRequirement;
 import com.crossroadsinn.components.squads.SquadRequirement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -80,16 +81,16 @@ public class ComponentsTest {
         Commander = new Responsibility("Commander");
         Aide = new Responsibility("Aide");
 
-        Druid = new Role("Druid", Arrays.asList(new BoonCoverage(Fury, 5), new BoonCoverage(Might, 10)), new ArrayList<>(List.of(Healer)));
+        Druid = new Role("Druid", Arrays.asList(new BoonCoverage(Fury, 5), new BoonCoverage(Might, 25)), new ArrayList<>(List.of(Healer)));
         Banners = new Role("Banners", null, new ArrayList<>(List.of(DamageDealer)));
         QuickFirebrand = new Role("QuickFirebrand", Arrays.asList(new BoonCoverage(Fury, 5), new BoonCoverage(Quickness, 5)), new ArrayList<>(List.of(DamageDealer)));
         HealFirebrand = new Role("HealFirebrand", Arrays.asList(new BoonCoverage(Fury, 5), new BoonCoverage(Quickness, 5)), new ArrayList<>(List.of(Healer)));
         HealFirebrandTank = new Role("HealFirebrand", Arrays.asList(new BoonCoverage(Fury, 5), new BoonCoverage(Quickness, 5)), new ArrayList<>(List.of(Healer, Tank)));
         Dps = new Role("DPS", null, new ArrayList<>(List.of(DamageDealer)));
         ChronoTank = new Role("ChronoTank", Collections.singletonList(new BoonCoverage(Quickness, 5)), new ArrayList<>(List.of(Tank)));
-        Tempest = new Role("Tempest", Arrays.asList(new BoonCoverage(Fury, 5), new BoonCoverage(Might, 10)), new ArrayList<>(List.of(Healer)));
+        Tempest = new Role("Tempest", Arrays.asList(new BoonCoverage(Fury, 5), new BoonCoverage(Might, 25)), new ArrayList<>(List.of(Healer)));
         Alacrigade = new Role("Alacrigade", Collections.singletonList(new BoonCoverage(Alacrity, 10)), new ArrayList<>(List.of(DamageDealer)));
-        Scam = new Role("SCAM", Arrays.asList(new BoonCoverage(Alacrity, 10), new BoonCoverage(Might, 10)), new ArrayList<>(List.of(DamageDealer)));
+        Scam = new Role("SCAM", Collections.singletonList(new BoonCoverage(Alacrity, 10)), new ArrayList<>(List.of(DamageDealer)));
 
         Druid1 = new Raider("", "", 0, null, Druid);
         Druid2 = new Raider("", "", 0, null, Druid);
@@ -121,7 +122,7 @@ public class ComponentsTest {
                 "Default",
                 Arrays.asList(
                         new BoonRequirement(Fury, 10),
-                        new BoonRequirement(Might, 10),
+                        new BoonRequirement(Might, 25),
                         new BoonRequirement(Alacrity, 10),
                         new BoonRequirement(Quickness, 10)
                 ),
@@ -132,7 +133,10 @@ public class ComponentsTest {
                         Healer,
                         Healer
                 ),
-                Arrays.asList(Druid, Banners)
+                Arrays.asList(
+                        new RoleRequirement(Druid, 1),
+                        new RoleRequirement(Banners, 1)
+                )
         );
 
         List<Raider> squad1 = Arrays.asList(Druid1, Banners1, HealFirebrand1, Dps1, Dps2, Dps3, DpsCom, DpsAide, ChronoTank1, Alacrigade1);
@@ -146,5 +150,8 @@ public class ComponentsTest {
 
         List<Raider> squad4 = Arrays.asList(Druid1, DpsAide, HealFirebrand1, Dps1, Dps2, Dps3, DpsCom, DpsAide, ChronoTank1, Alacrigade1);
         assertFalse(defaultComp.satisfies(squad4));
+
+        List<Raider> squad5 = Arrays.asList(Druid1, Banners1, QuickFirebrand1, Dps1, Dps2, Druid2, DpsCom, DpsAide, ChronoTank1, Alacrigade1);
+        assertFalse(defaultComp.satisfies(squad5));
     }
 }

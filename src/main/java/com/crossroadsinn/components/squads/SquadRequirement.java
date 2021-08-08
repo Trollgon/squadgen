@@ -4,6 +4,7 @@ import com.crossroadsinn.components.raiders.Raider;
 import com.crossroadsinn.components.roles.BoonCoverage;
 import com.crossroadsinn.components.roles.Responsibility;
 import com.crossroadsinn.components.roles.Role;
+import com.crossroadsinn.components.roles.RoleCoverage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +16,9 @@ public class SquadRequirement {
     private final int squadSize;
     private final List<BoonRequirement> boonRequirements;
     private final List<Responsibility> responsibilityRequirements;
-    private final List<Role> roleRequirements;
+    private final List<RoleRequirement> roleRequirements;
 
-    public SquadRequirement(String name, List<BoonRequirement> boonRequirements, List<Responsibility> responsibilityRequirements, List<Role> roleRequirements) {
+    public SquadRequirement(String name, List<BoonRequirement> boonRequirements, List<Responsibility> responsibilityRequirements, List<RoleRequirement> roleRequirements) {
         this.name = name;
         this.squadSize = 10;
         this.boonRequirements = boonRequirements;
@@ -25,7 +26,7 @@ public class SquadRequirement {
         this.roleRequirements = roleRequirements;
     }
 
-    public SquadRequirement(String name, int squadSize, List<BoonRequirement> boonRequirements, List<Responsibility> responsibilityRequirements, List<Role> roleRequirements) {
+    public SquadRequirement(String name, int squadSize, List<BoonRequirement> boonRequirements, List<Responsibility> responsibilityRequirements, List<RoleRequirement> roleRequirements) {
         this.name = name;
         this.squadSize = squadSize;
         this.boonRequirements = boonRequirements;
@@ -41,7 +42,7 @@ public class SquadRequirement {
         return boonRequirements;
     }
 
-    public List<Role> getRoleRequirements() {
+    public List<RoleRequirement> getRoleRequirements() {
         return roleRequirements;
     }
 
@@ -50,6 +51,7 @@ public class SquadRequirement {
     }
 
     public Boolean satisfies(List<Raider> raiderList) {
+        // init data structures for iterating
         List<Role> raidersRoleList = raiderList.stream().map(Raider::getRole).collect(Collectors.toList());
 
         List<BoonCoverage> raidersBoonCoverageList = new ArrayList<>();
@@ -94,10 +96,12 @@ public class SquadRequirement {
         }
 
         // all required roles?
-        if (!raidersRoleList.containsAll(roleRequirements)) {
-            // TODO: handle this better
-            System.out.println("Wrong Roles");
-            return false;
+        for (RoleRequirement roleRequirement : this.roleRequirements) {
+            if (!roleRequirement.satisfies(raidersRoleList)) {
+                // TODO: handle this better
+                System.out.println("Wrong Boons");
+                return false;
+            }
         }
 
         // all required responsibilities?
